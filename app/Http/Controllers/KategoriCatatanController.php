@@ -33,7 +33,9 @@ class KategoriCatatanController extends Controller
     public function create()
     {
         //
-        return view('kategori.create');
+        $data_kategori = KategoriCatatan::simplePaginate(10);
+        return view('kategori.create', compact('data_kategori'));
+        // return view('kategori.create');
     }
 
     /**
@@ -44,7 +46,12 @@ class KategoriCatatanController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        //deklarasi variabel
+        $kategori = new KategoriCatatan;
+        $kategori->nama_kategori = $request->nama_kategori;
+        $kategori->save();
+
+        return back()->with('success', 'Kategori berhasil disimpan');
     }
 
     /**
@@ -67,6 +74,8 @@ class KategoriCatatanController extends Controller
     public function edit($id)
     {
         //
+        $kategori = KategoriCatatan::find($id);
+        return view('kategori.edit', compact('kategori', 'id'));
     }
 
     /**
@@ -79,6 +88,17 @@ class KategoriCatatanController extends Controller
     public function update(Request $request, $id)
     {
         //
+        $kategori = KategoriCatatan::find($id);
+
+        $validatedData = $request->validate([
+            'nama_kategori' => 'required'
+        ]);
+
+        $kategori->nama_kategori =  $validatedData['nama_kategori'];
+        // $request->get('nama_kategori');
+        $kategori->save();
+
+        return redirect('kategori')->with('success', 'Kategori berhasil diubah.');
     }
 
     /**
@@ -90,5 +110,9 @@ class KategoriCatatanController extends Controller
     public function destroy($id)
     {
         //
+        $kategori = KategoriCatatan::find($id);
+        $kategori->delete();
+
+        return redirect('kategori')->with('success', 'Data berhasil dihapus.');
     }
 }
